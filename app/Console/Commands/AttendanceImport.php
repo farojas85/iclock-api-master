@@ -31,6 +31,13 @@ class AttendanceImport extends Command
      */
     public function handle()
     {
-        $marcaciones = $this->marcacion_model->saveAttendancesByAsc();
+        $tempo = 1;
+        while($tempo<=60){
+            sleep(1);
+            $estado_marcacion = $this->marcacion_model->saveAttendancesByAsc();
+            if($estado_marcacion == 1) {
+                $tempo += 1;
+            }
+        }
     }
 }
