@@ -29,4 +29,5 @@ Route::get('users',[ZKLibraryController::class,'getUsers']);
 Route::group(['prefix' => 'attendances'],function() {
     Route::get('/',[ZKLibraryController::class,'getAttendances']);
     Route::post('store',[ZKLibraryController::class,'saveAttendandes']);
+    Route::get('api-all',[ZKLibraryController::class,'obtenerMarcacionesApi']);
 });

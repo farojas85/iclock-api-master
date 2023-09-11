@@ -7,11 +7,11 @@ use Illuminate\Console\Command;
 
 class AttendanceImport extends Command
 {
-    private $marcacion_model;
+    // private $marcacion_model;
 
-    public function __construct() {
-        $this->marcacion_model = new Marcacion();
-    }
+    // public function __construct() {
+    //     $this->marcacion_model = new Marcacion();
+    // }
     /**
      * The name and signature of the console command.
      *
@@ -31,10 +31,11 @@ class AttendanceImport extends Command
      */
     public function handle()
     {
+        $marcacion_model = new Marcacion();
         $tempo = 1;
         while($tempo<=60){
             sleep(1);
-            $estado_marcacion = $this->marcacion_model->saveAttendancesByAsc();
+            $estado_marcacion = $marcacion_model->saveAttendancesByAsc();
             if($estado_marcacion == 1) {
                 $tempo += 1;
             }

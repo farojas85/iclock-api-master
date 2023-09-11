@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 use App\Models\Marcacion;
 use App\ZKService\ZKLibrary;
+use GuzzleHttp\Client;
 
 trait MarcacionTrait
 {
@@ -105,7 +106,6 @@ trait MarcacionTrait
         $res = $this->zklib->connect();
         if($res)
         {
-
             $attendances = $this->zklib->getAttendance();
             $serialSub = substr($this->zklib->getSerialNumber(), 14);
             $serial = substr($serialSub, 0, -1);
@@ -155,5 +155,25 @@ trait MarcacionTrait
 
         return false;
 
+    }
+
+    public function getAllAttendacesApi()
+    {
+        $client = new Client();
+
+        try {
+            $response = $client->get(config('app.api_url'));
+
+            // Verificar si la respuesta tiene un código 200 (éxito)
+            if ($response->getStatusCode() == 200) {
+                return $response->getBody();
+                 //json_decode($response->getBody(), true);
+                // Aquí puedes trabajar con los datos de respuesta
+            } else {
+                // Manejar el caso en que la respuesta no sea un código 200
+            }
+        } catch (\Exception $e) {
+            // Manejar errores de excepción, como problemas de conexión
+        }
     }
 }

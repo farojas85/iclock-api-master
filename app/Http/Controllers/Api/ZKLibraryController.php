@@ -53,4 +53,11 @@ class ZKLibraryController extends Controller
             return "Marcaciones guardadas satisfactoriamente";
         }
     }
+
+    public function obtenerMarcacionesApi()
+    {
+        $marcaciones_api= $this->marcacion_model->getAllAttendacesApi();
+
+        return response()->json($marcaciones_api,200);
+    }
 }
