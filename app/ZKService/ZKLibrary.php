@@ -664,17 +664,19 @@ class ZKLibrary
 
 		try {
 			if ($this->protocol == 'TCP') {
+				
 				if ($size > 1024) {
+					
 					$this->received_data = $this->recv();
 					$bytes = $size;
 					$bytes2 = 0;
 					$tembytes = $bytes;
 
 					if ($bytes) {
-
+						
 						array_push($this->user_data, substr($this->received_data, 16));
 						$bytes -= strlen($this->received_data);
-
+						
 						while ($bytes > 0) {
 							$received_data = $this->recv();
 							$bytes2 += strlen($received_data);
@@ -777,9 +779,9 @@ class ZKLibrary
 			}
 			return $users;
 		} catch (ErrorException $e) {
-			return FALSE;
+			return $e->getMessage();
 		} catch (exception $e) {
-			return FALSE;
+			return $e->getMessage();
 		}
 	}
 	public function getUserTemplateAll($uid)

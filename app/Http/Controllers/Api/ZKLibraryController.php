@@ -21,13 +21,28 @@ class ZKLibraryController extends Controller
 
     public function getUsers() {
         $users = $this->marcacion_model->getUsers();
-
-        if($users == 404)
+        //dd($users);
+        $usuarios = array();
+        if(count($users))
         {
-            abort(404);
+            foreach($users as $user)
+            {
+                array_push($usuarios,[
+                    'id' =>json_decode(utf8_encode($user[0]),JSON_UNESCAPED_UNICODE),
+                    'nombre' => $user[1],
+                    'huella' => $user[2],
+                    'pin' => $user[3],
+                ]);
+            }
         }
+        //return  json_encode($usuarios,JSON_UNESCAPED_UNICODE);
+        //dd($usuarios);
+        // if($users == 404)
+        // {
+        //     abort(404);
+        // }
         
-        return response()->json($users,200);
+        return response()->json($usuarios,200, array('Content-Type'=>'application/json; charset=utf-8' ));
 
     }
 
@@ -39,11 +54,14 @@ class ZKLibraryController extends Controller
             abort(404);
         }
         
-        return response()->json($attendances,200);
+        return response()->json(count($attendances),200);
     }
 
     public function saveAttendandes() {
-        $estado_save = $this->marcacion_model->saveAttendances();
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+        
+        $estado_save = $this->marcacion_model->saveAttendancesByAsc();
 
         if($estado_save == 404){
             abort(404);
@@ -57,6 +75,13 @@ class ZKLibraryController extends Controller
     public function obtenerMarcacionesApi()
     {
         $marcaciones_api= $this->marcacion_model->getAllAttendacesApi();
+
+        return response()->json($marcaciones_api,200);
+    }
+
+    public function verificarDniPersonal(Request $request)
+    {
+        $marcaciones_api= $this->marcacion_model->verificarDniPersonal($request);
 
         return response()->json($marcaciones_api,200);
     }

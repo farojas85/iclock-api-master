@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Console\Commands\AttendanceImport;
+use App\Console\Commands\AttendanceExport;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command(AttendanceImport::class)->everySecond();
+        $schedule->command(AttendanceExport::class)->everyMinute();
     }
 
     /**

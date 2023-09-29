@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Marcacion;
 use Illuminate\Console\Command;
 
-class AttendanceImport extends Command
+class AttendanceExport extends Command
 {
     // private $marcacion_model;
 
@@ -17,14 +17,14 @@ class AttendanceImport extends Command
      *
      * @var string
      */
-    protected $signature = 'attendance:import';
+    protected $signature = 'attendance:export';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Importar Marcaciones del reloj';
+    protected $description = 'Exportar Marcaciones del reloj';
 
     /**
      * Execute the console command.
@@ -33,12 +33,12 @@ class AttendanceImport extends Command
     {
         $marcacion_model = new Marcacion();
         $tempo = 1;
-        while($tempo<=60){
-            sleep(1);
-            $estado_marcacion = $marcacion_model->saveAttendancesByAsc();
+        // while($tempo<=60){
+        //     sleep(1);
+            $estado_marcacion = $marcacion_model->saveAttendancesCronJob();
             if($estado_marcacion == 1) {
-                $tempo += 1;
+                //$tempo += 1;
             }
-        }
+        //}
     }
 }
