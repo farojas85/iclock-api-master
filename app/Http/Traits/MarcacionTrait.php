@@ -3,23 +3,24 @@
 namespace App\Http\Traits;
 
 use App\Models\Marcacion;
-use App\ZKService\ZKLibrary;
-//use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use Rats\Zkteco\Lib\ZKTeco;
+use Exception;
 
 trait MarcacionTrait
 {
     private $zklib;
 
     private $tipo_marcacion;
-    
+
     public function __construct()
     {
-        $this->zklib = new ZKLibrary(
-            config('zkteco.ip'),
-            config('zkteco.port'),
-            config('zkteco.protocol')
-        );
+        // $this->zklib = new ZKLibrary(
+        //     config('zkteco.ip'),
+        //     config('zkteco.port'),
+        //     config('zkteco.protocol')
+        // );
+        $this->zklib = new ZKTeco(config('zkteco.ip'));
 
         $this->tipo_marcacion = [
             0 => 'ENTRADA',
@@ -28,7 +29,7 @@ trait MarcacionTrait
             5 => 'SALIDA TE'
         ];
     }
-    
+
     public function getUsers()
     {
         $res = $this->zklib->connect();
@@ -37,26 +38,20 @@ trait MarcacionTrait
         {
             $users = $this->zklib->getUser();
             $this->zklib->disconnect();
-
-            return $users;
         }
-
-        return array();        
+        return $users;
     }
 
     public function getAttedances()
     {
         $res = $this->zklib->connect();
+        $attendances = array();
         if($res)
         {
             $attendances = array_reverse($this->zklib->getAttendance());
-            
             $this->zklib->disconnect();
-            
-            return $attendances;
         }
-
-        return 404;
+        return $attendances;
     }
 
     public function getAttedancesByAsc()
@@ -65,9 +60,9 @@ trait MarcacionTrait
         if($res)
         {
             $attendances = $this->zklib->getAttendance();
-            
+
             $this->zklib->disconnect();
-            
+
             return $attendances;
         }
 
@@ -81,12 +76,12 @@ trait MarcacionTrait
         {
 
             $attendances = array_reverse($this->zklib->getAttendance());
-            $serialSub = substr($this->zklib->getSerialNumber(false), 14);
+            $serialSub = substr($this->zklib->serialNumber(), 14);
             $serial = substr($serialSub, 0, -1);
 
-            if(count($attendances) > 0) 
+            if(count($attendances) > 0)
             {
-                foreach ($attendances as $attItem) {    
+                foreach ($attendances as $attItem) {
 
                     if($this->attendanceUserVerify($attItem[0],$attItem[4])===false)
                     {
@@ -107,7 +102,7 @@ trait MarcacionTrait
             $this->zklib->disconnect();
 
             return 1;
-            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty            
+            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty
         }
         return 404;
     }
@@ -121,15 +116,15 @@ trait MarcacionTrait
         if($res)
         {
             $attendances = array_reverse($this->zklib->getAttendance());
-            $serialSub = substr($this->zklib->getSerialNumber(false), 14);
+            $serialSub = substr($this->zklib->serialNumber(), 14);
             $serial = substr($serialSub, 0, -1);
             $this->zklib->disconnect();
 
-            if(count($attendances) > 0) 
+            if(count($attendances) > 0)
             {
                 //sleep(1);
-                
-                foreach ($attendances as $attItem) {    
+
+                foreach ($attendances as $attItem) {
 
                     if($this->attendanceUserVerify($attItem[0],$attItem[4])===false)
                     {
@@ -144,13 +139,13 @@ trait MarcacionTrait
                             $marcacion->serial = $serial;
                             $marcacion->ip = config('zkteco.ip');
                             $marcacion->save();
-                            
+
                             if($marcacion->numero_documento != null)
                             {
                                 $estado = $this->saveAttendanceInApp($marcacion);
                                 // if($estado['ok'] == 1)
                                 // {
-    
+
                                 // }
                             }
                         //}
@@ -159,10 +154,10 @@ trait MarcacionTrait
 
             }
 
-            
+
 
             return 1;
-            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty            
+            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty
         }
         return 404;
     }
@@ -176,14 +171,14 @@ trait MarcacionTrait
         if($res)
         {
             $attendances = array_reverse($this->zklib->getAttendance());
-            $serialSub = substr($this->zklib->getSerialNumber(false), 14);
+            $serialSub = substr($this->zklib->serialNumber(), 14);
             $serial = substr($serialSub, 0, -1);
             $this->zklib->disconnect();
 
-            if(count($attendances) > 0) 
+            if(count($attendances) > 0)
             {
-                //sleep(1);                
-                foreach ($attendances as $attItem) {                    
+                //sleep(1);
+                foreach ($attendances as $attItem) {
                     if(($this->attendanceUserVerify($attItem[0],$attItem[4])===false ) && (
                         $attItem[3] >= date('Y-m-d')." 00:00:00" && $attItem[3] <= date('Y-m-d H:i:s')))
                     {
@@ -198,7 +193,7 @@ trait MarcacionTrait
                             $marcacion->serial = $serial;
                             $marcacion->ip = config('zkteco.ip');
                             $marcacion->save();
-                            
+
                             if($marcacion->numero_documento != null)
                             {
                                 $estado = $this->saveAttendanceInApp($marcacion);
@@ -209,15 +204,15 @@ trait MarcacionTrait
                             }
                         //}
                     }
-                    
+
                 }
 
             }
 
-            
+
 
             return 1;
-            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty            
+            //$this->zklib->clearAttendance(); // Remove attendance log only if not empty
         }
         return 404;
     }
