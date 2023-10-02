@@ -179,17 +179,17 @@ trait MarcacionTrait
             {
                 //sleep(1);
                 foreach ($attendances as $attItem) {
-                    if(($this->attendanceUserVerify($attItem[0],$attItem[4])===false ) && (
-                        $attItem[3] >= date('Y-m-d')." 00:00:00" && $attItem[3] <= date('Y-m-d H:i:s')))
+                    if(($this->attendanceUserVerify($attItem['id'],$attItem['type'])===false ) && (
+                        $attItem['timestamp'] >= date('Y-m-d')." 00:00:00" && $attItem[3] <= date('Y-m-d H:i:s')))
                     {
                         // if($this->getVerificarDniPersonalApp($attItem[1]) != 0)
                         // {
                             $marcacion = new Marcacion();
-                            $marcacion->uid = $attItem[0];
-                            $marcacion->numero_documento = $attItem[1];
-                            $marcacion->estado = $attItem[2];
-                            $marcacion->fecha = $attItem[3];
-                            $marcacion->tipo = $attItem[4];
+                            $marcacion->uid = $attItem['uid'];
+                            $marcacion->numero_documento = $attItem['userid'];
+                            $marcacion->estado = $attItem['state'];
+                            $marcacion->fecha = $attItem['timestamp'];
+                            $marcacion->tipo = $attItem['type'];
                             $marcacion->serial = $serial;
                             $marcacion->ip = config('zkteco.ip');
                             $marcacion->save();
@@ -219,7 +219,7 @@ trait MarcacionTrait
 
     public function attendanceUserVerify($user_id,$tipo)
     {
-        $marcacion_count =  Marcacion::where('uid',$user_id)
+        $marcacion_count =  Marcacion::where('numero_documento',$user_id)
                                 ->whereDate('fecha',date('Y-m-d'))
                                 ->where('tipo',$tipo)
                                 ->count()
