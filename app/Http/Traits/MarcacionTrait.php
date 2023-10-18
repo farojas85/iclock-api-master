@@ -186,7 +186,7 @@ trait MarcacionTrait
                         // {
                             $marcacion = new Marcacion();
                             $marcacion->uid = $attItem['uid'];
-                            $marcacion->numero_documento = $attItem['userid'];
+                            $marcacion->numero_documento = $attItem['id'];
                             $marcacion->estado = $attItem['state'];
                             $marcacion->fecha = $attItem['timestamp'];
                             $marcacion->tipo = $attItem['type'];
